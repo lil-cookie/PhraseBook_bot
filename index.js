@@ -4,105 +4,84 @@
 var TelegramBot = require('node-telegram-bot-api');
 var token = '446870696:AAHOCXd1SZ_qfo8t0FnR13MZP36nZAAM0ZE';
 var bot = new TelegramBot(token, {polling: true});
-
-/*
-bot.on('message', function (msg) {
-    var chatId = msg.chat.id;
-    console.log(msg);
-    bot.sendMessage(chatId, "Hello!", {caption: "I'm a bot!"});
-});
-*/
+var request = require("request");
 
 
-
-bot.onText(/\/translate (.+)/, function (msg, match) {
+bot.onText(/\/t (.+)/, function (msg, match) {
     var userId = msg.from.id;
     var text = match[1];
 
-    var yaDetectLangCommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json/detect?key=trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b&hint=en,ru&text=';
-    var yaTransCommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b&lang=ru-en&text=';
+    var yaDetectLangCommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json/detect?key=trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b';//&hint=en,ru';
+    var yaTransCommonUrl = 'https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20170504T181631Z.5cffb45738337a99.d503a4cd6b54e2d3c09573b880a6e2803c481583';
 
-    var yaDetLangRequest = yaDetectLangCommonUrl+text;
-    var yaTransRequest = yaTransCommonUrl+text;
+    var yaDetLangRequest = yaDetectLangCommonUrl+'&text='+encodeURI(text);
+    console.log('===='+yaDetLangRequest);
+    var yaTransRequest = yaTransCommonUrl+'&text='+encodeURI(text);
+    lang=null;
 
-    var request = require("request");
+    LangReq(yaDetLangRequest,function GetYaTranslate (lang) {
+        if (lang=='ru')
+        {
+            yaTransRequest+='&lang=ru-en';
+            console.log(lang+  yaTransRequest);
+        }
+        else {
+            yaTransRequest+= '&lang=en-ru';
+            console.log( lang+ yaTransRequest);
+        }
 
-    function LangReq(url, callback){
-        var resp =  request({
-            url: url,
-            json: true
-        },  function getResp (error, response, body) {
-            if (!error && response.statusCode === 200) {
-                //  bot.sendMessage(userId,text+' - '+body.lang);
-                callback(body.lang);
-            }
-            else  {
-                //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось(');
-                callback(null);}
+        //   bot.sendMessage(userId,text+' - '+lang);
+        TransReq(yaTransRequest,function(def) {
+            //console.log(lang);
+            var message = '';
+
+            def.forEach(function(item) {
+                //var trs =;
+                item.tr.forEach(function(item2) {
+                    message+=item2.text+', ';
+                });
+            });
+            message=message.slice(0,-2)
+            bot.sendMessage(userId,text+' - '+message);
         });
-    };
-
-
-    function TransReq(url, callback){
-        var resp =  request({
-            url: url,
-            json: true
-        },  function getResp (error, response, body) {
-            if (!error && response.statusCode === 200) {
-                //  bot.sendMessage(userId,text+' - '+body.lang);
-                bot.sendMessage(userId,text+' - '+body.text);
-                console.log(body);
-                callback(body.text);
-            }
-            else  {
-                //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось(');
-                callback(null);}
-        });
-    };
-
-
-   LangReq(yaDetLangRequest,function(lang) {
-        bot.sendMessage(userId,text+' - '+lang);
-
-       TransReq(yaTransRequest,function(translation) {
-           //console.log(lang);
-           bot.sendMessage(userId,text+' - '+translation[0]);
-       });
     });
 
-    //bot.sendMessage(userId,text+' - '+notes[0]);
-    //if (resp.response.code==200) {bot.sendMessage(userId,text+' - '+resp.body.lang);}
-   // else  {bot.sendMessage(userId,'К сожалению, по вашему запросу - '+ text +' - ничего не нашлось(');}
-    //bot.sendMessage(userId,text+' - '+request);
-   // var code = resp.code;
+
 
 });
 
 
 
 
-bot.onText(/\/test (.+)/, function (msg, match) {
-    var userId = msg.from.id;
-    var text = match[1];
 
-    bot.sendMessage(userId,notes[0][text]);
+function LangReq(url, callback){
+    var resp =  request({
+        url: url,
+        json: true
+    },  function getResp (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log('------'+body.lang);
+            callback(body.lang);
 
-    //bot.sendMessage(userId,text+' - '+notes[0]);
-    //if (resp.response.code==200) {bot.sendMessage(userId,text+' - '+resp.body.lang);}
-    // else  {bot.sendMessage(userId,'К сожалению, по вашему запросу - '+ text +' - ничего не нашлось(');}
-    //bot.sendMessage(userId,text+' - '+request);
-    // var code = resp.code;
-});
+        }
+        else  {
+            console.log('++++++'+body.code,body.lang);
+            //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось(');
+            callback(null);}
+    });
+};
 
 
-
-
-
-/*var request = require('request');
- request(yaDetLangRequest, function (error, response, body) {
- json=body;
- console.log('error:', error); // Print the error if one occurred
- console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
- console.log('body:', body); // Print the HTML for the Google homepage.
- });*/
-
+function TransReq(url, callback){
+    var resp =  request({
+        url: url,
+        json: true
+    },  function getResp (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            callback(body.def);
+        }
+        else  {
+            //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось(');
+            callback(null);}
+    });
+};
