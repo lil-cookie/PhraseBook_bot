@@ -7,6 +7,19 @@ var bot = new TelegramBot(token, {polling: true});
 var request = require("request");
 
 
+// берём Express
+var express = require('express');
+// создаём Express-приложение
+var app = express();
+// создаём маршрут для главной страницы
+app.get('/autoget', function(req, res) {
+    res.sendfile('somepage.html');
+});
+
+// запускаем сервер на порту 8080
+app.listen(8080);
+
+
 bot.onText(/\/t (.+)/, function (msg, match) {
     var userId = msg.from.id;
     var text = match[1];

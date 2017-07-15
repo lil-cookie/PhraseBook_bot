@@ -1,11 +1,14 @@
-{ 
-  "name": "PhraseBook_bot", 
-  "version": "1.0.2", 
-  "description": "PhraseBook_bot", 
-  "main": "index.js", 
-  "scripts": { 
-    "start": "node index.js" 
-  }, 
-  "author": "Helen Filatova", 
-  "license": "MIT" 
+{
+  "name": "PhraseBook_bot",
+  "version": "1.0.2",
+  "description": "PhraseBook_bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Helen Filatova",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
 }
