@@ -3,10 +3,11 @@
  */
 var TelegramBot = require('node-telegram-bot-api');
 var token = '446870696:AAHOCXd1SZ_qfo8t0FnR13MZP36nZAAM0ZE';
-var bot = new TelegramBot(token, {polling: true});
+var bot = new TelegramBot(token, {polling: false});
 var request = require("request");
 
-
+/*костыль для автозапросов к серверу, возвращающих страничку с кодом 200.
+с целью предотвращения падений по таймауту по обращениям к серверу на бесплатном хероку.*/
 // берём Express
 var express = require('express');
 // создаём Express-приложение
@@ -15,9 +16,9 @@ var app = express();
 app.get('/autoget', function(req, res) {
     res.sendfile('somepage.html');
 });
-
 // запускаем сервер на порту 8080
 app.listen(8080);
+
 
 
 bot.onText(/\/t (.+)/, function (msg, match) {
