@@ -19,6 +19,14 @@ app.get('/autoget', function(req, res) {
 // запускаем сервер на порту 8080
 app.listen(8080);
 
+bot.onText(/\/help (.+)/, function (msg, match) {
+    
+            bot.sendMessage(userId,'команды');
+
+});
+
+
+
 
 
 bot.onText(/\/t (.+)/, function (msg, match) {
