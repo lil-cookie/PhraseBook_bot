@@ -2,7 +2,7 @@
  * Created by Helen on 08.07.2017.
  */
 var TelegramBot = require('node-telegram-bot-api');
-var token = '446870696:AAHOCXd1SZ_qfo8t0FnR13MZP36nZAAM0ZE';
+var token = '446870696:AAFcygEdHjbOGMXxHAquCMzSF_QbzaSBNRE';
 var bot = new TelegramBot(token, {polling: false});
 var request = require("request");
 
