@@ -51,7 +51,7 @@ bot.onText(/(^(?!\/).+)/, function (msg, match) {
 
         TransReq(yaTransRequest,function(translation) {
             if (translation == '') { bot.sendMessage(userId,'по вашему запросу - \"'+ text +'\" - ничего не нашлось'); } 
-            else {bot.sendMessage(userId,'('+langTO+')'+' '+translation);} 
+            else {bot.sendMessage(userId,/*'('+langTO+')'+' '+*/''+translation);} 
         });
 });
 
