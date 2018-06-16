@@ -8,15 +8,31 @@ var bot = new TelegramBot(token, {polling: true});
 var request = require("request");
 var langTO='en';
 
+
 var YT_token = 'trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b';
 var YT_CommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json';
 
 
  bot.onText(/\/setlang (.+)/, function (msg, match) {
     var chatId = msg.from.id;
-    langTO = match[1];
-    console.log(msg);
-    bot.sendMessage(chatId,'Язык на который будет осуществляться перевод изменен на - '+langTO);
+    var langWantTO = match[1].trim();
+    //console.log(langWantTO+'  '+msg);
+
+    var yaLangListRequest= YT_CommonUrl+'/getLangs?key='+YT_token+'&ui='+langWantTO;
+    console.log(yaLangListRequest);
+
+    var message = '';
+    var num = 0;
+    var supportedLangs;
+
+    LangListReq(yaLangListRequest,function(langs) { supportedLangs=langs; 
+        if (supportedLangs[langWantTO] == '') { bot.sendMessage(chatId,'Выбранный Вами язык не поддерживается');}
+        else  { console.log(supportedLangs[langWantTO]);  
+                langTO = langWantTO;
+                bot.sendMessage(chatId,'Язык на который будет осуществляться перевод изменен на - '+supportedLangs[langWantTO]);}
+    });
+
+
 });
 
 
@@ -68,7 +84,6 @@ bot.onText(/\/getlang/, function (msg, match) {
     var num = 0;
 
     LangListReq(yaLangListRequest,function(langs) {
-
         for (var key in langs) {
           // этот код будет вызван для каждого свойства объекта
           // ..и выведет имя свойства и его значение
