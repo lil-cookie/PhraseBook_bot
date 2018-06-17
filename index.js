@@ -4,13 +4,13 @@
 process.env["NTBA_FIX_319"] = 1;*/
 var TelegramBot = require('node-telegram-bot-api');
 var authModule = require('./config/tokens');
-var TelegramToken = authModule.TelegramToken;//'446870696:AAHjg7_5VN_hwwP21oIWMvQDZqUWukwVXhU';
+var TelegramToken = authModule.TelegramToken;
 var bot = new TelegramBot(TelegramToken, {polling: true});
 var request = require("request");
 var langTO='en';
 
 
-var YT_token = authModule.YT_token;//'trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b';
+var YT_token = authModule.YT_token;
 var YT_CommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json';
 
 
