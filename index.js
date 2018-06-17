@@ -3,7 +3,7 @@
  
 process.env["NTBA_FIX_319"] = 1;*/
 var TelegramBot = require('node-telegram-bot-api');
-var authModule = require('./config');
+var authModule = require('./config/tokens');
 var TelegramToken = authModule.TelegramToken;//'446870696:AAHjg7_5VN_hwwP21oIWMvQDZqUWukwVXhU';
 var bot = new TelegramBot(TelegramToken, {polling: true});
 var request = require("request");
