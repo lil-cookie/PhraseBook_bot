@@ -3,13 +3,14 @@
  
 process.env["NTBA_FIX_319"] = 1;*/
 var TelegramBot = require('node-telegram-bot-api');
-var token = '446870696:AAHjg7_5VN_hwwP21oIWMvQDZqUWukwVXhU';
-var bot = new TelegramBot(token, {polling: true});
+var authModule = require('./config');
+var TelegramToken = authModule.TelegramToken;//'446870696:AAHjg7_5VN_hwwP21oIWMvQDZqUWukwVXhU';
+var bot = new TelegramBot(TelegramToken, {polling: true});
 var request = require("request");
 var langTO='en';
 
 
-var YT_token = 'trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b';
+var YT_token = authModule.YT_token;//'trnsl.1.1.20170504T180134Z.b9ccf53264e138fd.3d51a5a8a3f7c8b790704622cfb4d1ddf71f1a5b';
 var YT_CommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json';
 
 
@@ -31,14 +32,12 @@ var YT_CommonUrl = 'https://translate.yandex.net/api/v1.5/tr.json';
                 langTO = langWantTO;
                 bot.sendMessage(chatId,'Язык на который будет осуществляться перевод изменен на - '+supportedLangs[langWantTO]);}
     });
-
-
 });
 
 
-/*send translation of message on any message /(.+)/*/
+/*send translation of received message on any message /(.+)/*/
 bot.onText(/(^(?!\/).+)/, function (msg, match) {
-    var userId = msg.from.id;
+    var chatId = msg.from.id;
     var text = msg.text;
     
     //console.log(text.replace(/(\r\n|\n|\r)/gm," "));
@@ -50,8 +49,8 @@ bot.onText(/(^(?!\/).+)/, function (msg, match) {
     console.log(langTO+yaTransRequest);
 
         TransReq(yaTransRequest,function(translation) {
-            if (translation == '') { bot.sendMessage(userId,'по вашему запросу - \"'+ text +'\" - ничего не нашлось'); } 
-            else {bot.sendMessage(userId,/*'('+langTO+')'+' '+*/''+translation);} 
+            if (translation == '') { bot.sendMessage(chatId,'по вашему запросу - \"'+ text +'\" - ничего не нашлось'); } 
+            else {bot.sendMessage(chatId,/*'('+langTO+')'+' '+*/''+translation);} 
         });
 });
 
@@ -67,9 +66,7 @@ function TransReq(url, callback){
         if (!error && response.statusCode === 200) {
             callback(body.text);
         }
-        else  {
-            //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось');
-            callback(null);}
+        else  {callback(null);}
     });
 };
 
@@ -104,9 +101,7 @@ function LangListReq(url, callback){
         if (!error && response.statusCode === 200) {
             callback(body.langs);
         }
-        else  {
-            //bot.sendMessage(userId,'по вашему запросу - '+ text +' - ничего не нашлось');
-            callback(null);}
+        else  { callback(null);}
     });
 };
 
